@@ -34,5 +34,9 @@ async function enviarScriptPorLinhas(scriptText){
 
 // Exemplo:
 enviarScriptPorLinhas(`
+linha 1
+linha 2
+linha 3
 
+linha 5 com linha 4 vazia antes
 `);
