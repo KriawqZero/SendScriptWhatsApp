@@ -1,17 +1,21 @@
-async function enviarScript(scriptText){
-	const lines = scriptText.split(/[\n\t]+/).map(line => line.trim()).filter(line => line);
-	main = document.querySelector("#main"),
-	textarea = main.querySelector(`div[contenteditable="true"]`)
+async function enviarScriptPorLinhas(scriptText){
+	// separa preservando cada linha exatamente como está
+	const lines = scriptText
+		.split(/\r?\n/)
+		.map(l => l.trimEnd()); // remove só espaços do fim, mantém linha vazia
+
+	const main = document.querySelector("#main");
+	const textarea = main.querySelector(`div[contenteditable="true"]`);
 	
-	if(!textarea) throw new Error("Não há uma conversa aberta")
-	
-	for(const line of lines){
-		console.log(line)
-	
+	if (!textarea) throw new Error("Não há uma conversa aberta");
+
+	for (let i = 0; i < lines.length; i++) {
+		const line = lines[i];
+
 		textarea.focus();
 		document.execCommand('insertText', false, line);
-		textarea.dispatchEvent(new Event('change', {bubbles: true}));
-	
+		textarea.dispatchEvent(new Event('change', { bubbles: true }));
+
 		setTimeout(() => {
 			(
 				main.querySelector(`[aria-label="Send"]`) ||
@@ -19,13 +23,16 @@ async function enviarScript(scriptText){
 				main.querySelector(`[data-icon="send"]`)
 			).click();
 		}, 100);
-		
-		if(lines.indexOf(line) !== lines.length - 1) await new Promise(resolve => setTimeout(resolve, 250));
+
+		if (i < lines.length - 1) {
+			await new Promise(resolve => setTimeout(resolve, 250));
+		}
 	}
-	
+
 	return lines.length;
 }
 
-enviarScript(`
-texto
-`).then(e => console.log(`Código finalizado, ${e} mensagens enviadas`)).catch(console.error)
+// Exemplo:
+enviarScriptPorLinhas(`
+
+`);
